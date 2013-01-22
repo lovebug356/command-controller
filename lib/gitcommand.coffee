@@ -1,0 +1,22 @@
+cp = require 'child_process'
+exec = cp.exec
+fs = require 'fs'
+
+ShellCommand = require './shellcommand'
+
+class GitFetchCommand extends ShellCommand
+  constructor: (@uri, @module, @branch) ->
+    super(@uri)
+  preRun: (done) ->
+    fs.exists @module, (exists) =>
+      if exists
+        @cmd = "git remote update"
+        @folder = @module
+      else
+        @cmd = "git clone #{@uri} #{@module}"
+        @folder = undefined
+      if @branch
+        @cmd += " && git checkout #{@branch}"
+      done true
+
+module.exports = GitFetchCommand

@@ -4,12 +4,20 @@
   "description": "Manage execution of dependend commands",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/lovebug356/command-controller.git"
   },
   "author": "Thijs Vermeir <thijsvermeir@gmail.com>",
-  "license": "BSD"
+  "license": "BSD",
+  "dependencies": {
+    "colors": "*"
+  },
+  "devDependencies": {
+    "mocha": "1.8.1",
+    "should": "*",
+    "coffee-script": "1.4.0"
+  }
 }
