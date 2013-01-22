@@ -1,0 +1,15 @@
+{
+  "name": "command-controller",
+  "version": "0.0.1",
+  "description": "Manage execution of dependend commands",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lovebug356/command-controller.git"
+  },
+  "author": "Thijs Vermeir <thijsvermeir@gmail.com>",
+  "license": "BSD"
+}
