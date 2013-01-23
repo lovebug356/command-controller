@@ -7,8 +7,10 @@ class Project
     @git = new GitCommand @uri, @module
     @buildConfigure()
     @configure.addDependency @git
+    @configure.logFile = "#{@module}_configure.log"
     @make = new ShellCommand "make", @module
     @make.addDependency @configure
+    @make.logFile = "#{@module}_make.log"
     @cco.addCommand @git
     @cco.addCommand @configure
     @cco.addCommand @make

@@ -1,4 +1,5 @@
 colors = require 'colors'
+fs = require 'fs'
 
 class CommandController
   constructor: (@threads) ->
@@ -52,6 +53,8 @@ class CommandController
             @error cmd, "error"
           @running.splice idx, 1
           @done.push cmd
+          if cmd.logFile
+            fs.writeFile cmd.logFile, cmd.cmd + "\n\n" + cmd.log, (err) ->
           @run done
       else
         done()
