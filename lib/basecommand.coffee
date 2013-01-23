@@ -11,6 +11,8 @@ class BaseCommand
       if not dependency.done
         return done false
     return done true
+  preRun: (done) ->
+    done true
   run: (done) ->
     @done = true
     done()

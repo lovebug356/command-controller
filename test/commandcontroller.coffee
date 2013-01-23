@@ -40,7 +40,7 @@ describe 'CommandController', () ->
 
   it 'should limit the amount of simultanious commands', (done) ->
     d1 = new cc.ShellCommand "ls"
-    d2 = new cc.ShellCommand "ls"
+    d2 = new cc.ShellCommand "ls -als"
     cco = new cc.CommandController 1
     cco.addCommand d1
     cco.addCommand d2
@@ -53,3 +53,14 @@ describe 'CommandController', () ->
       d2.done.should.be.ok
       done()
 
+  it 'should chain commands that are dependencies of each other', (done) ->
+    d1 = new cc.ShellCommand "ls"
+    d2 = new cc.ShellCommand "ls -als"
+    cco = new cc.CommandController 2
+    d2.addDependency d1
+    cco.addCommand d1
+    cco.addCommand d2
+    cco.run () ->
+      d1.done.should.be.ok
+      d2.done.should.be.ok
+      done()

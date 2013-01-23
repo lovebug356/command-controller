@@ -7,6 +7,7 @@ ShellCommand = require './shellcommand'
 class GitFetchCommand extends ShellCommand
   constructor: (@uri, @module, @branch) ->
     super(@uri)
+    @name = "git #{@module}"
   preRun: (done) ->
     fs.exists @module, (exists) =>
       if exists

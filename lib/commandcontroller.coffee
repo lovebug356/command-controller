@@ -13,16 +13,23 @@ class CommandController
     @pending.push cmd
     cmd.id = @size()
     cmd.cc = @
+    @log cmd, "add"
   firstReady: (done, idx=0) ->
     if idx + 1 > @cmds.length
       return undefined
     @cmds[idx].isReady (ready) =>
-      if not @cmds[idx].done and ready
+      if not @cmds[idx].done and ready and @pending.indexOf(@cmds[idx]) >= 0
         done @cmds[idx]
       else
         @firstReady done, idx + 1
   prefix: (cmd) ->
-    return "[#{cmd.id}/#{@size()}]"
+    #ret = "[#{cmd.id}/#{@size()}]"
+    ret = "[#{@pending.length}/#{@running.length}/#{@done.length}]"
+    if cmd
+      ret += "(#{cmd.id})"
+    return ret
+  log: (cmd, log) ->
+    console.log "#{@prefix(cmd)} #{log} #{cmd.name}".blue
   good: (cmd, log) ->
     console.log "#{@prefix(cmd)} #{log} #{cmd.name}".green
   warning: (cmd, log) ->
@@ -34,16 +41,20 @@ class CommandController
     idx = @pending.indexOf cmd
     @pending.splice idx, 1
     @running.push cmd
-    @warning cmd, "add"
-    cmd.run () =>
-      idx = @running.indexOf cmd
-      if not cmd.err
-        @good cmd, "done"
+    @warning cmd, "start"
+    cmd.preRun (reallyRun) =>
+      if reallyRun
+        cmd.run () =>
+          idx = @running.indexOf cmd
+          if not cmd.err
+            @good cmd, "done"
+          else
+            @error cmd, "error"
+          @running.splice idx, 1
+          @done.push cmd
+          @run done
       else
-        @error cmd, "error"
-      @running.splice idx, 1
-      @done.push cmd
-      @run done
+        done()
   run: (done) ->
     if @running.length >= @threads
       return
@@ -59,7 +70,7 @@ class CommandController
           return
     else
       if @running.length == 0
-        console.log "[#{@done.length}/#{@size()}] all done".green
+        console.log "#{@prefix()} all done".green
         done()
 
 module.exports = CommandController

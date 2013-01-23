@@ -49,10 +49,10 @@ describe('CommandController', function() {
       return done();
     });
   });
-  return it('should limit the amount of simultanious commands', function(done) {
+  it('should limit the amount of simultanious commands', function(done) {
     var cco, d1, d2;
     d1 = new cc.ShellCommand("ls");
-    d2 = new cc.ShellCommand("ls");
+    d2 = new cc.ShellCommand("ls -als");
     cco = new cc.CommandController(1);
     cco.addCommand(d1);
     cco.addCommand(d2);
@@ -61,6 +61,20 @@ describe('CommandController', function() {
       this.length.should.not.be.above(1.);
       return this.oldPush(item);
     };
+    return cco.run(function() {
+      d1.done.should.be.ok;
+      d2.done.should.be.ok;
+      return done();
+    });
+  });
+  return it('should chain commands that are dependencies of each other', function(done) {
+    var cco, d1, d2;
+    d1 = new cc.ShellCommand("ls");
+    d2 = new cc.ShellCommand("ls -als");
+    cco = new cc.CommandController(2);
+    d2.addDependency(d1);
+    cco.addCommand(d1);
+    cco.addCommand(d2);
     return cco.run(function() {
       d1.done.should.be.ok;
       d2.done.should.be.ok;
