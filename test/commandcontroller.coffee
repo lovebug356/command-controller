@@ -64,3 +64,31 @@ describe 'CommandController', () ->
       d1.done.should.be.ok
       d2.done.should.be.ok
       done()
+
+  it 'should skip a task when a dependency has an error', (done) ->
+    d1 = new cc.ShellCommand "ls"
+    d2 = new cc.ShellCommand "ls -als"
+    cco = new cc.CommandController 2
+    d2.addDependency d1
+    cco.addCommand d1
+    cco.addCommand d2
+    d1.done = true
+    d1.err = true
+    cco.firstReady (first) ->
+      should.not.exist first
+      done()
+
+
+  it 'should be done, if there are no ready tasks anymore', (done) ->
+    d1 = new cc.ShellCommand "ls"
+    d2 = new cc.ShellCommand "ls -als"
+    cco = new cc.CommandController 2
+    d2.addDependency d1
+    cco.addCommand d1
+    cco.addCommand d2
+    d1.done = true
+    d1.err = true
+    cco.run () ->
+      d1.done.should.be.ok
+      d2.done.should.be.not.ok
+      done()

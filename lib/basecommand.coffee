@@ -8,7 +8,7 @@ class BaseCommand
     @dependencies.push dep
   isReady: (done) ->
     for dependency in @dependencies
-      if not dependency.done
+      if not dependency.done or (dependency.done and dependency.err)
         return done false
     return done true
   preRun: (done) ->

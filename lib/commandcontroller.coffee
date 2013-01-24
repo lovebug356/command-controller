@@ -17,7 +17,7 @@ class CommandController
     @log cmd, "add"
   firstReady: (done, idx=0) ->
     if idx + 1 > @cmds.length
-      return undefined
+      return done undefined
     @cmds[idx].isReady (ready) =>
       if not @cmds[idx].done and ready and @pending.indexOf(@cmds[idx]) >= 0
         done @cmds[idx]
@@ -70,6 +70,9 @@ class CommandController
             # cmd is in sync
             @run done
         else
+          if @running.length == 0
+            console.log "#{@prefix()} skipped #{@pending.length}".grey
+            return done()
           return
     else
       if @running.length == 0

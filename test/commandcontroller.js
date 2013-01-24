@@ -67,7 +67,7 @@ describe('CommandController', function() {
       return done();
     });
   });
-  return it('should chain commands that are dependencies of each other', function(done) {
+  it('should chain commands that are dependencies of each other', function(done) {
     var cco, d1, d2;
     d1 = new cc.ShellCommand("ls");
     d2 = new cc.ShellCommand("ls -als");
@@ -78,6 +78,37 @@ describe('CommandController', function() {
     return cco.run(function() {
       d1.done.should.be.ok;
       d2.done.should.be.ok;
+      return done();
+    });
+  });
+  it('should skip a task when a dependency has an error', function(done) {
+    var cco, d1, d2;
+    d1 = new cc.ShellCommand("ls");
+    d2 = new cc.ShellCommand("ls -als");
+    cco = new cc.CommandController(2);
+    d2.addDependency(d1);
+    cco.addCommand(d1);
+    cco.addCommand(d2);
+    d1.done = true;
+    d1.err = true;
+    return cco.firstReady(function(first) {
+      should.not.exist(first);
+      return done();
+    });
+  });
+  return it('should be done, if there are no ready tasks anymore', function(done) {
+    var cco, d1, d2;
+    d1 = new cc.ShellCommand("ls");
+    d2 = new cc.ShellCommand("ls -als");
+    cco = new cc.CommandController(2);
+    d2.addDependency(d1);
+    cco.addCommand(d1);
+    cco.addCommand(d2);
+    d1.done = true;
+    d1.err = true;
+    return cco.run(function() {
+      d1.done.should.be.ok;
+      d2.done.should.be.not.ok;
       return done();
     });
   });
