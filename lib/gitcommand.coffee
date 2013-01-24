@@ -14,7 +14,7 @@ class GitFetchCommand extends ShellCommand
         @cmd = "git remote update"
         @folder = @module
       else
-        @cmd = "git clone #{@uri} #{@module}"
+        @cmd = "git clone #{@uri} #{@module} && cd #{@module}"
         @folder = undefined
       if @branch
         @cmd += " && git checkout origin/#{@branch}"
