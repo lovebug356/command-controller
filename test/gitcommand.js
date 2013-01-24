@@ -29,7 +29,7 @@ describe('GitFetchCommand', function() {
     sh1 = new cc.GitFetchCommand("ssh://not_interesting", "lib2", "1.0");
     return sh1.preRun(function(shouldRun) {
       shouldRun.should.be["true"];
-      sh1.cmd.should.equal("git clone ssh://not_interesting lib2 && git checkout 1.0");
+      sh1.cmd.should.equal("git clone ssh://not_interesting lib2 && git checkout origin/1.0");
       return done();
     });
   });
