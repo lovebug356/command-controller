@@ -17,7 +17,7 @@ class GitFetchCommand extends ShellCommand
         @cmd = "git clone #{@uri} #{@module}"
         @folder = undefined
       if @branch
-        @cmd += " && git checkout #{@branch}"
+        @cmd += " && git checkout origin/#{@branch}"
       done true
 
 module.exports = GitFetchCommand
