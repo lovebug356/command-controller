@@ -47,12 +47,12 @@ class CommandController
       if reallyRun
         cmd.run () =>
           idx = @running.indexOf cmd
+          @running.splice idx, 1
+          @done.push cmd
           if not cmd.err
             @good cmd, "done"
           else
             @error cmd, "error"
-          @running.splice idx, 1
-          @done.push cmd
           if cmd.logFile
             fs.writeFile cmd.logFile, cmd.cmd + "\n\n" + cmd.log, (err) ->
           @run done
