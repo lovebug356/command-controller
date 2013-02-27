@@ -57,6 +57,7 @@ class CommandController
             fs.writeFile cmd.logFile, cmd.cmd + "\n\n" + cmd.log, (err) ->
           @run done
       else
+        @warning cmd, "skipped"
         idx = @running.indexOf cmd
         @running.splice idx, 1
         @done.push cmd
