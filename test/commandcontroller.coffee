@@ -92,3 +92,16 @@ describe 'CommandController', () ->
       d1.done.should.be.ok
       d2.done.should.be.not.ok
       done()
+
+  it 'should continue if preRun returns false', (done) ->
+    d1 = new cc.ShellCommand "ls"
+    d2 = new cc.ShellCommand "ls -als"
+    cco = new cc.CommandController 2
+    d1.preRun = (done) ->
+      done false
+    cco.addCommand d1
+    cco.addCommand d2
+    cco.run () ->
+      d1.done.should.be.not.ok
+      d2.done.should.be.ok
+      done()

@@ -57,7 +57,10 @@ class CommandController
             fs.writeFile cmd.logFile, cmd.cmd + "\n\n" + cmd.log, (err) ->
           @run done
       else
-        done()
+        idx = @running.indexOf cmd
+        @running.splice idx, 1
+        @done.push cmd
+        @run done
   run: (done) ->
     if @running.length >= @threads
       return

@@ -12,11 +12,11 @@ describe 'GitFetchCommand', () ->
     sh1 = new cc.GitFetchCommand "ssh://not_interesting", "lib2"
     sh1.preRun (shouldRun) ->
       shouldRun.should.be.true
-      sh1.cmd.should.equal "git clone ssh://not_interesting lib2"
+      sh1.cmd.should.equal "git clone ssh://not_interesting lib2 && cd lib2"
       done()
   it 'should checkout the correct branch', (done) ->
     sh1 = new cc.GitFetchCommand "ssh://not_interesting", "lib2", "1.0"
     sh1.preRun (shouldRun) ->
       shouldRun.should.be.true
-      sh1.cmd.should.equal "git clone ssh://not_interesting lib2 && git checkout origin/1.0"
+      sh1.cmd.should.equal "git clone ssh://not_interesting lib2 && cd lib2 && git checkout origin/1.0"
       done()
