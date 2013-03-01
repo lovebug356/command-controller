@@ -112,18 +112,37 @@ describe('CommandController', function() {
       return done();
     });
   });
-  return it('should continue if preRun returns false', function(done) {
+  it('should continue if preRun returns false', function(done) {
     var cco, d1, d2;
     d1 = new cc.ShellCommand("ls");
     d2 = new cc.ShellCommand("ls -als");
     cco = new cc.CommandController(2);
     d1.preRun = function(done) {
+      d1.done = true;
       return done(false);
     };
     cco.addCommand(d1);
     cco.addCommand(d2);
     return cco.run(function() {
-      d1.done.should.be.not.ok;
+      d1.done.should.be.ok;
+      d2.done.should.be.ok;
+      return done();
+    });
+  });
+  return it('should not block dependencies when preRun returns false', function(done) {
+    var cco, d1, d2;
+    d1 = new cc.ShellCommand("ls");
+    d2 = new cc.ShellCommand("ls -als");
+    d2.addDependency(d1);
+    cco = new cc.CommandController(2);
+    d1.preRun = function(done) {
+      d1.done = true;
+      return done(false);
+    };
+    cco.addCommand(d1);
+    cco.addCommand(d2);
+    return cco.run(function() {
+      d1.done.should.be.ok;
       d2.done.should.be.ok;
       return done();
     });

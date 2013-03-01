@@ -31,6 +31,8 @@ class CommandController
     return ret
   log: (cmd, log) ->
     console.log "#{@prefix(cmd)} #{log} #{cmd.name}".blue
+  info: (cmd, log) ->
+    console.log "#{@prefix(cmd)} #{log} #{cmd.name}".cyan
   good: (cmd, log) ->
     console.log "#{@prefix(cmd)} #{log} #{cmd.name}".green
   warning: (cmd, log) ->
@@ -60,7 +62,7 @@ class CommandController
         idx = @running.indexOf cmd
         @running.splice idx, 1
         @done.push cmd
-        @log cmd, "skipped"
+        @info cmd, "skipped"
         @run done
   run: (done) ->
     if @running.length >= @threads
