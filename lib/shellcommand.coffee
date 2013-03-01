@@ -1,10 +1,11 @@
 cp = require 'child_process'
 exec = cp.exec
+fs = require 'fs'
 
 BaseCommand = require './basecommand'
 
 class ShellCommand extends BaseCommand
-  constructor: (@cmd, @folder) ->
+  constructor: (@cmd, @folder, @checkFile = null) ->
     super(@cmd)
     if @folder
       @name = "#{@cmd} (#{@folder})"
@@ -19,5 +20,14 @@ class ShellCommand extends BaseCommand
       @log = stdout
       @err_log = stderr
       super done
+  preRun: (done) ->
+    if @checkFile != null
+      fs.exists @checkFile, (exists) =>
+        if exists
+          @done = true
+          @alreadyDone = true
+        return done not exists
+    else
+      return done true
 
 module.exports = ShellCommand
