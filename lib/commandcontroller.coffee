@@ -15,6 +15,7 @@ class CommandController
     cmd.id = @size()
     cmd.cc = @
     @log cmd, "add"
+    return cmd
   firstReady: (done, idx=0) ->
     if idx + 1 > @cmds.length
       return done undefined
