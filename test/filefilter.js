@@ -7,7 +7,7 @@ cc = require('../');
 
 describe('FileFilter', function() {
   return it('should find the package.json file', function(done) {
-    return cc.FileFilter.foreach('.', cc.FileFilter.ext(/\.json$/), function(filename) {
+    return cc.FileFilter.foreach('.', /\.json$/, function(filename) {
       return done();
     });
   });

@@ -1,18 +1,13 @@
 #!/usr/bin/env coffee
 fs = require 'fs'
 
-foreachFile = (folder, filter, done) ->
+foreachFile = (folder, match, done) ->
   fs.readdir folder, (err, files) ->
     if err
       console.log 'ERROR', err
       return
     for file in files
-      filter file, done
-
-extFilter = (match) ->
-  return (filename, done) ->
-    if filename.match match
-      done filename
+      if file.match match
+        done file
 
 module.exports.foreach = foreachFile
-module.exports.ext     = extFilter

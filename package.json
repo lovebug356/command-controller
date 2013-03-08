@@ -1,6 +1,6 @@
 {
   "name": "command-controller",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Manage execution of dependend commands",
   "main": "index.js",
   "scripts": {
