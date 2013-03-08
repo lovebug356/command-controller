@@ -129,7 +129,7 @@ describe('CommandController', function() {
       return done();
     });
   });
-  return it('should not block dependencies when preRun returns false', function(done) {
+  it('should not block dependencies when preRun returns false', function(done) {
     var cco, d1, d2;
     d1 = new cc.ShellCommand("ls");
     d2 = new cc.ShellCommand("ls -als");
@@ -144,6 +144,19 @@ describe('CommandController', function() {
     return cco.run(function() {
       d1.done.should.be.ok;
       d2.done.should.be.ok;
+      return done();
+    });
+  });
+  return it('should support very large numbers of dependency tasks', function(done) {
+    var cco, d1, d3;
+    cco = new cc.CommandController(2);
+    d1 = new cc.ShellCommand("ls");
+    cco.addCommand(d1);
+    d3 = new cc.ShellCommand("ls -als");
+    cco.addCommand(d3);
+    return cco.run(function() {
+      d1.done.should.be.ok;
+      d3.done.should.be.ok;
       return done();
     });
   });

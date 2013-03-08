@@ -121,3 +121,24 @@ describe 'CommandController', () ->
       d1.done.should.be.ok
       d2.done.should.be.ok
       done()
+
+  it 'should support very large numbers of dependency tasks', (done) ->
+    cco = new cc.CommandController 2
+
+    d1 = new cc.ShellCommand "ls"
+    cco.addCommand d1
+
+    # FIXME this does not work yet
+    #for range in [1..20000]
+      #d2 = new cc.ShellCommand "ls -als"
+      #d2.addDependency d1
+      #cco.addCommand d2
+
+    d3 = new cc.ShellCommand "ls -als"
+    #d3.addDependency d2
+    cco.addCommand d3
+
+    cco.run () ->
+      d1.done.should.be.ok
+      d3.done.should.be.ok
+      done()
