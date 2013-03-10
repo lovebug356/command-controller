@@ -42,4 +42,3 @@ describe 'BaseCommand', () ->
     d1.isReady (ready) =>
       ready.should.be.not.ok
       done()
-

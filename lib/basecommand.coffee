@@ -40,7 +40,7 @@ class BaseCommand
         if exists
           @done = true
           @alreadyDone = true
-        return done false
+        return done not exists
     else
       return done true
   run: (done) ->
