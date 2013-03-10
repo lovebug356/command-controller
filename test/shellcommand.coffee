@@ -29,7 +29,7 @@ describe 'ShellCommand', () ->
 
   it 'should indicate already done if dstFile exsits', (done) ->
     sh1 = new cc.ShellCommand "ls", process.cwd()
-    sh1.dstFile = 'package.json'
+    sh1.getDstFile = () -> return 'package.json'
     sh1.preRun (really) ->
       really.should.be.false
       sh1.done.should.be.ok

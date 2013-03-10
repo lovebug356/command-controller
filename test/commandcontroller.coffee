@@ -142,3 +142,58 @@ describe 'CommandController', () ->
       d1.done.should.be.ok
       d3.done.should.be.ok
       done()
+
+  it 'should find cmds which are the real targets (are no dependencies)', (done) ->
+    cco = new cc.CommandController 2
+    d1 = cco.addCommand new cc.ShellCommand "ls"
+    d2 = cco.addCommand new cc.ShellCommand "ls -als"
+    d2.addDependency d1
+    cco.firstTarget (target) ->
+      console.log target
+      target.should.eql d2
+      done()
+
+  it 'should find cmds which are marked as targets (target=True)', (done) ->
+    cco = new cc.CommandController 2
+    d1 = cco.addCommand new cc.ShellCommand "ls"
+    d2 = cco.addCommand new cc.ShellCommand "ls -als"
+    d2.addDependency d1
+    d1.target = true
+    cco.firstTarget (target) ->
+      target.should.eql d1
+      done()
+
+  it 'should find first ready cmd', (done) ->
+    cco = new cc.CommandController 2
+    d1 = cco.addCommand new cc.ShellCommand "ls"
+    d2 = cco.addCommand new cc.ShellCommand "ls -als"
+    d2.addDependency d1
+    d1.target = true
+    cco.firstTarget (target) ->
+      target.should.eql d1
+      done()
+
+  it 'should skip dependencies of already done tasks', (done) ->
+    cco = new cc.CommandController 2
+    d1 = cco.addCommand new cc.ShellCommand "ls"
+    d2 = cco.addCommand new cc.ShellCommand "ls -als"
+    d2.addDependency d1
+    d2.getDstFile = () -> return 'package.json'
+    cco.checkPreRun () ->
+      d2.done.should.be.ok
+      d2.alreadyDone.should.be.ok
+      d1.done.should.be.ok
+      done()
+
+  it 'should not skip dependencies of already done tasks if marked as target', (done) ->
+    cco = new cc.CommandController 2
+    d1 = cco.addCommand new cc.ShellCommand "ls"
+    d2 = cco.addCommand new cc.ShellCommand "ls -als"
+    d2.addDependency d1
+    d2.getDstFile = () -> return 'package.json'
+    d1.target = true
+    cco.checkPreRun () ->
+      d2.done.should.be.ok
+      d2.alreadyDone.should.be.ok
+      d1.done.should.be.not.ok
+      done()

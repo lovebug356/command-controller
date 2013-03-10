@@ -41,7 +41,9 @@ describe('ShellCommand', function() {
   return it('should indicate already done if dstFile exsits', function(done) {
     var sh1;
     sh1 = new cc.ShellCommand("ls", process.cwd());
-    sh1.dstFile = 'package.json';
+    sh1.getDstFile = function() {
+      return 'package.json';
+    };
     return sh1.preRun(function(really) {
       really.should.be["false"];
       sh1.done.should.be.ok;

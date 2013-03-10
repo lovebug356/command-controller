@@ -16,6 +16,62 @@ class CommandController
     cmd.cc = @
     @log cmd, "add"
     return cmd
+  getTargets: (cmd) ->
+    targets = []
+    for cmd in @cmds
+      if cmd.dependencies.indexOf(cmd) >= 0
+        targets.push cmd
+    return targets
+  checkPreRun: (done) ->
+    all = []
+    start = @cmds.length
+    for cmd in @cmds
+      cmd.preRun (really) =>
+        if cmd.done
+          idx = @running.indexOf cmd
+          @pending.splice idx, 1
+          @done.push cmd
+          @info cmd, "skipped (prerun)"
+          for depCommand in cmd.dependencies
+            continue if depCommand.target
+            allDone = true
+            targets = @getTargets depCommand
+            for target in targets
+              if not target.done
+                allDone = false
+                break
+            if allDone
+              depCommand.done = true
+              idx = @running.indexOf depCommand
+              @pending.splice idx, 1
+              @done.push depCommand
+              @info depCommand, "skipped (no target)"
+        all.push cmd
+        if @cmds.length == start
+          if all.length == start
+            done()
+  firstTarget: (done, idx=0) ->
+    while true
+      found = false
+      return done undefined if idx + 1 > @cmds.length
+      cmd = @cmds[idx]
+      return done cmd if cmd.target
+      for peer in @cmds
+        if peer.dependencies.indexOf(cmd) >= 0
+          found = true
+          break
+      if found
+        idx += 1
+      else
+        return done cmd
+  firstReadyTarget: (done, idx=0) ->
+    @firstTarget idx, (target) =>
+      return done undefined if not target
+      target.isReady (ready) =>
+        if not ready
+          firstReadyTarget done, @cmds.indexOf(target)+1
+        else
+          done target
   firstReady: (done, idx=0) ->
     if idx + 1 > @cmds.length
       return done undefined
@@ -65,6 +121,9 @@ class CommandController
         @done.push cmd
         @info cmd, "skipped"
         @run done
+  checkRun: (done) ->
+    @checkPreRun () ->
+      @run done
   run: (done) ->
     if @running.length >= @threads
       return

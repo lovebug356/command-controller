@@ -31,8 +31,8 @@ class BaseCommand
         return done false
     return done true
   preRun: (done) ->
-    if @dstFile
-      return @preRunFile @dstFile, done
+    if @getDstFile()
+      return @preRunFile @getDstFile(), done
     done true
   preRunFile: (filename, done) ->
     if filename != null

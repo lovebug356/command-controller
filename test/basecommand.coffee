@@ -29,7 +29,7 @@ describe 'BaseCommand', () ->
 
   it 'should skip the test if dstFile already exists', (done) ->
     d1 = new cc.BaseCommand()
-    d1.dstFile = 'package.json'
+    d1.getDstFile = () -> return 'package.json'
     d1.preRun (really) ->
       really.should.be.not.ok
       d1.done.should.be.ok

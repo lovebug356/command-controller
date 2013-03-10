@@ -39,7 +39,9 @@ describe('BaseCommand', function() {
   it('should skip the test if dstFile already exists', function(done) {
     var d1;
     d1 = new cc.BaseCommand();
-    d1.dstFile = 'package.json';
+    d1.getDstFile = function() {
+      return 'package.json';
+    };
     return d1.preRun(function(really) {
       really.should.be.not.ok;
       d1.done.should.be.ok;
