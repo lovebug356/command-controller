@@ -26,3 +26,20 @@ describe 'BaseCommand', () ->
     bc.isReady (ready) ->
       ready.should.be.not.ok
       done()
+
+  it 'should skip the test if dstFile already exists', (done) ->
+    d1 = new cc.BaseCommand()
+    d1.dstFile = 'package.json'
+    d1.preRun (really) ->
+      really.should.be.not.ok
+      d1.done.should.be.ok
+      d1.alreadyDone.should.be.ok
+      done()
+
+  it 'should not be ready when there is no srcFile', (done) ->
+    d1 = new cc.BaseCommand()
+    d1.srcFile = 'package.json2'
+    d1.isReady (ready) =>
+      ready.should.be.not.ok
+      done()
+

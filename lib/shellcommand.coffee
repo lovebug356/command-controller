@@ -26,7 +26,7 @@ class ShellCommand extends BaseCommand
         if exists
           @done = true
           @alreadyDone = true
-        return done not exists
+        return done false
     else
       return done true
 
