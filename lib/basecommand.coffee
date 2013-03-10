@@ -1,5 +1,6 @@
 #!/usr/bin/env coffee
 fs = require 'fs'
+path = require 'path'
 
 class BaseCommand
   constructor: (@name) ->
@@ -7,6 +8,8 @@ class BaseCommand
     @done = false
   addDependency: (dep) ->
     @dependencies.push dep
+  getDstFile: (filename=@srcFile) ->
+    return path.join @dstFolder, path.basename filename
   isReady: (done) ->
     if @srcFile
       fs.exists @srcFile, (exists) =>

@@ -27,8 +27,9 @@ describe 'ShellCommand', () ->
     sh1.setName "ls2"
     sh1.name.should.equal "ls2"
 
-  it 'should indicate already done if checkfile exsits', (done) ->
-    sh1 = new cc.ShellCommand "ls", process.cwd(), 'package.json'
+  it 'should indicate already done if dstFile exsits', (done) ->
+    sh1 = new cc.ShellCommand "ls", process.cwd()
+    sh1.dstFile = 'package.json'
     sh1.preRun (really) ->
       really.should.be.false
       sh1.done.should.be.ok
