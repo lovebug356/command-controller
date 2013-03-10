@@ -1,5 +1,6 @@
 #!/usr/bin/env coffee
 fs = require 'fs'
+path = require 'path'
 
 foreachFile = (folder, match, done) ->
   fs.readdir folder, (err, files) ->
@@ -8,6 +9,6 @@ foreachFile = (folder, match, done) ->
       return
     for file in files
       if file.match match
-        done file
+        done path.join folder, file
 
 module.exports.foreach = foreachFile
