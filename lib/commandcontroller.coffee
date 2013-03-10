@@ -26,30 +26,33 @@ class CommandController
     all = []
     start = @cmds.length
     for cmd in @cmds
-      cmd.preRun (really) =>
-        if cmd.done
-          idx = @running.indexOf cmd
-          @pending.splice idx, 1
-          @done.push cmd
-          @info cmd, "skipped (prerun)"
-          for depCommand in cmd.dependencies
-            continue if depCommand.target
-            allDone = true
-            targets = @getTargets depCommand
-            for target in targets
-              if not target.done
-                allDone = false
-                break
-            if allDone
-              depCommand.done = true
-              idx = @running.indexOf depCommand
-              @pending.splice idx, 1
-              @done.push depCommand
-              @info depCommand, "skipped (no target)"
-        all.push cmd
-        if @cmds.length == start
-          if all.length == start
-            done()
+      continue if cmd.done
+      do (cmd) =>
+        cmd.preRun (really) =>
+          if cmd.done
+            idx = @pending.indexOf cmd
+            @pending.splice idx, 1
+            @done.push cmd
+            @info cmd, "skipped (prerun)"
+            for depCommand in cmd.dependencies
+              continue if depCommand.target
+              continue if depCommand.done
+              allDone = true
+              targets = @getTargets depCommand
+              for target in targets
+                if not target.done
+                  allDone = false
+                  break
+              if allDone
+                depCommand.done = true
+                idx = @pending.indexOf depCommand
+                @pending.splice idx, 1
+                @done.push depCommand
+                @info depCommand, "skipped (no target)"
+          all.push cmd
+          if @cmds.length == start
+            if all.length == start
+              done()
   firstTarget: (done, idx=0) ->
     while true
       found = false
@@ -122,7 +125,7 @@ class CommandController
         @info cmd, "skipped"
         @run done
   checkRun: (done) ->
-    @checkPreRun () ->
+    @checkPreRun () =>
       @run done
   run: (done) ->
     if @running.length >= @threads
