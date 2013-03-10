@@ -22,6 +22,23 @@ class CommandController
       if cmd.dependencies.indexOf(cmd) >= 0
         targets.push cmd
     return targets
+  checkNoTarget: (cmd) ->
+    for depCommand in cmd.dependencies
+      continue if depCommand.target
+      continue if depCommand.done
+      allDone = true
+      targets = @getTargets depCommand
+      for target in targets
+        if not target.done
+          allDone = false
+          break
+      if allDone
+        depCommand.done = true
+        idx = @pending.indexOf depCommand
+        @pending.splice idx, 1
+        @done.push depCommand
+        @info depCommand, "skipped (no target)"
+        @checkNoTarget depCommand
   checkPreRun: (done) ->
     all = []
     start = @cmds.length
@@ -31,24 +48,11 @@ class CommandController
         cmd.preRun (really) =>
           if cmd.done
             idx = @pending.indexOf cmd
-            @pending.splice idx, 1
-            @done.push cmd
-            @info cmd, "skipped (prerun)"
-            for depCommand in cmd.dependencies
-              continue if depCommand.target
-              continue if depCommand.done
-              allDone = true
-              targets = @getTargets depCommand
-              for target in targets
-                if not target.done
-                  allDone = false
-                  break
-              if allDone
-                depCommand.done = true
-                idx = @pending.indexOf depCommand
-                @pending.splice idx, 1
-                @done.push depCommand
-                @info depCommand, "skipped (no target)"
+            if idx >= 0
+              @pending.splice idx, 1
+              @done.push cmd
+              @info cmd, "skipped (prerun)"
+            @checkNoTarget cmd
           all.push cmd
           if @cmds.length == start
             if all.length == start
