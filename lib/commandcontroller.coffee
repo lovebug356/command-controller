@@ -70,6 +70,9 @@ class CommandController
       return
     if @pending.length > 0
       @firstReady (fr) =>
+        # Async so other tasks could be started already
+        if @running.length >= @threads
+          return
         if fr
           running = @running.length
           @startCmd fr, done
