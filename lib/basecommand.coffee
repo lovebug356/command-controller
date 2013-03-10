@@ -4,8 +4,15 @@ path = require 'path'
 
 class BaseCommand
   constructor: (@name) ->
-    @dependencies = []
+    if not @dependencies
+      @dependencies = []
     @done = false
+  resolveSrcFile: () ->
+    if @srcFile instanceof BaseCommand
+      if not @dependencies
+        @dependencies = []
+      @addDependency @srcFile
+      @srcFile = @srcFile.getDstFile()
   addDependency: (dep) ->
     @dependencies.push dep
   getDstFile: (filename=@srcFile) ->
