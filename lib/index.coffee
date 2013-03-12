@@ -10,3 +10,6 @@ module.exports.Copy = FileUtils.Copy
 module.exports.Move = FileUtils.Move
 module.exports.Delete = FileUtils.Delete
 module.exports.Zip = FileUtils.Zip
+FileResource = require './fileresource'
+module.exports.LocalFile = FileResource.LocalFile
+module.exports.FileList = FileResource.FileList
