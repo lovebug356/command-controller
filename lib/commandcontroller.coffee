@@ -1,5 +1,6 @@
 colors = require 'colors'
 fs = require 'fs'
+Group = require './group'
 
 class CommandController
   constructor: (@threads) ->
@@ -104,23 +105,26 @@ class CommandController
   error: (cmd, log) ->
     console.log "#{@prefix(cmd)} #{log} #{cmd.name}".red
     console.log cmd.err_log.red
+  run2done: (cmd) ->
+    idx = @running.indexOf cmd
+    @running.splice idx, 1
+    @done.push cmd
+    if not cmd.err
+      @good cmd, "done"
+    else
+      @error cmd, "error"
+    if cmd.logFile
+      fs.writeFile cmd.logFile, cmd.cmd + "\n\n" + cmd.log, (err) ->
   startCmd: (cmd, done) ->
     idx = @pending.indexOf cmd
     @pending.splice idx, 1
     @running.push cmd
-    @warning cmd, "start"
+    if not (cmd instanceof Group)
+      @warning cmd, "start"
     cmd.preRun (reallyRun) =>
       if reallyRun
         cmd.run () =>
-          idx = @running.indexOf cmd
-          @running.splice idx, 1
-          @done.push cmd
-          if not cmd.err
-            @good cmd, "done"
-          else
-            @error cmd, "error"
-          if cmd.logFile
-            fs.writeFile cmd.logFile, cmd.cmd + "\n\n" + cmd.log, (err) ->
+          @run2done cmd
           @run done
       else
         idx = @running.indexOf cmd
