@@ -16,6 +16,8 @@ class BaseCommand
   addDependency: (dep) ->
     @dependencies.push dep
   getDstFile: (filename=@srcFile) ->
+    if filename == undefined
+      return undefined
     return path.join @dstFolder, path.basename filename
   isReady: (done) ->
     if @srcFile
